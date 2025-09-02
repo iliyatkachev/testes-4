@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>DDS Manager</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>ДДС (Cash Flow)</h1>
+
+    <section class="card">
+      <h2>Новая запись</h2>
+      <form id="create-form" hx-post="/api/entries" hx-trigger="submit" hx-swap="none" onsubmit="return handleCreate(event)">
+        <div class="grid">
+          <label>Дата
+            <input type="date" id="date" required />
+          </label>
+          <label>Статус
+            <select id="status" required>
+              <option value="business">Бизнес</option>
+              <option value="personal">Личное</option>
+              <option value="tax">Налог</option>
+            </select>
+          </label>
+          <label>Тип
+            <select id="type" required>
+              <option value="income">Поступление</option>
+              <option value="expense">Списание</option>
+            </select>
+          </label>
+          <label>Категория
+            <input type="text" id="category" required placeholder="Напр. Инфраструктура" />
+          </label>
+          <label>Подкатегория
+            <input type="text" id="subcategory" required placeholder="Напр. VPS" />
+          </label>
+          <label>Сумма (₽)
+            <input type="number" id="amount" step="0.01" min="0" required />
+          </label>
+          <label class="col-span-2">Комментарий
+            <input type="text" id="comment" placeholder="Необязательно" />
+          </label>
+        </div>
+        <button type="submit">Создать</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Фильтр</h2>
+      <form method="get" action="/" class="grid">
+        <label>Дата с
+          <input type="date" name="date_from" value="{{ filters.date_from or '' }}" />
+        </label>
+        <label>Дата по
+          <input type="date" name="date_to" value="{{ filters.date_to or '' }}" />
+        </label>
+        <label>Статус
+          <input type="text" name="status" value="{{ filters.status or '' }}" />
+        </label>
+        <label>Тип
+          <input type="text" name="type" value="{{ filters.type or '' }}" />
+        </label>
+        <label>Категория
+          <input type="text" name="category" value="{{ filters.category or '' }}" />
+        </label>
+        <label>Подкатегория
+          <input type="text" name="subcategory" value="{{ filters.subcategory or '' }}" />
+        </label>
+        <button type="submit">Применить</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Список записей</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th><th>Дата</th><th>Статус</th><th>Тип</th><th>Категория</th><th>Подкатегория</th><th>Сумма</th><th>Комментарий</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for e in entries %}
+          <tr>
+            <td>{{ e.id }}</td>
+            <td>{{ e.date }}</td>
+            <td>{{ e.status }}</td>
+            <td>{{ e.type }}</td>
+            <td>{{ e.category }}</td>
+            <td>{{ e.subcategory }}</td>
+            <td>{{ "%.2f"|format(e.amount) }}</td>
+            <td>{{ e.comment or '' }}</td>
+          </tr>
+        {% else %}
+          <tr><td colspan="8" class="muted">Нет данных</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </section>
+  </div>
+
+  <script>
+    async function handleCreate(ev) {
+      ev.preventDefault();
+      const payload = {
+        date: document.getElementById('date').value,
+        status: document.getElementById('status').value,
+        type: document.getElementById('type').value,
+        category: document.getElementById('category').value,
+        subcategory: document.getElementById('subcategory').value,
+        amount: parseFloat(document.getElementById('amount').value),
+        comment: document.getElementById('comment').value || null,
+      };
+      const res = await fetch('/api/entries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (res.ok) {
+        window.location.reload();
+      } else {
+        const err = await res.json().catch(() => ({ detail: 'Ошибка сервера' }));
+        alert('Ошибка: ' + (err.detail || res.status));
+      }
+      return false;
+    }
+  </script>
+</body>
+</html>

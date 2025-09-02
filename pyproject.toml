@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+
+[project]
+name = "dds-test-project"
+version = "0.1.0"
+description = "Веб-сервис для управления движением денежных средств (ДДС) — FastAPI + SQLAlchemy + SQLite/Postgres + HTMX."
+authors = [{name = "ChatGPT", email = "noreply@example.com"}]
+dependencies = [
+    "fastapi>=0.111.0",
+    "uvicorn>=0.30.0",
+    "SQLAlchemy>=2.0.30",
+    "psycopg[binary]>=3.1.18",      # <— для PostgreSQL
+    "pydantic>=2.7.0",
+    "pydantic-settings>=2.2.1",
+    "python-multipart>=0.0.9",
+    "jinja2>=3.1.4",
+    "httpx>=0.27.0",
+    "pytest>=8.3.0",
+    "pytest-asyncio>=0.23.7",
+    "anyio>=4.4.0"
+]
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"

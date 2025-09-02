@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: dds_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-dds}
+      POSTGRES_USER: ${POSTGRES_USER:-dds}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dds}
+      TZ: Europe/Amsterdam
+    ports:
+      - "${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - dds_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-dds} -d ${POSTGRES_DB:-dds}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build: .
+    container_name: dds_web
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    environment:
+      # Пример: postgresql+psycopg://user:pass@host:port/db
+      DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://${POSTGRES_USER:-dds}:${POSTGRES_PASSWORD:-dds}@db:5432/${POSTGRES_DB:-dds}}
+      TZ: Europe/Amsterdam
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    # если нужно "горячее" обновление при локальной разработке:
+    # volumes:
+    #   - ./app:/app/app:ro
+
+volumes:
+  dds_db_data:

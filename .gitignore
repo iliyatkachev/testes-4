@@ -1,0 +1,80 @@
+# -------------------------------
+# Python / Pydantic / FastAPI
+# -------------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.log
+*.sqlite3
+*.db
+*.env
+.env.*
+!.env.example
+
+# Папки virtualenv
+.venv/
+venv/
+ENV/
+env/
+.Python
+
+# VS Code / PyCharm
+.vscode/
+.idea/
+*.iml
+
+# Тестовые и временные файлы
+.coverage
+htmlcov/
+.tox/
+.cache/
+pytest_cache/
+*.mo
+*.pot
+*.pid
+*.bak
+*.swp
+.DS_Store
+
+# MyPy / Pyright / Pylint / Ruff
+.mypy_cache/
+.pyright/
+.pytest_cache/
+.pyre/
+ruff_cache/
+
+# Jupyter / IPython
+.ipynb_checkpoints/
+*.ipynb
+
+# -------------------------------
+# Docker
+# -------------------------------
+*.pid
+*.seed
+docker-compose.override.yml
+# docker volumes
+dds_db_data/
+
+# -------------------------------
+# Build / Packaging
+# -------------------------------
+build/
+dist/
+.eggs/
+*.egg-info/
+*.egg
+MANIFEST
+
+# -------------------------------
+# VSCode Debug artifacts
+# -------------------------------
+*.code-workspace
+.vscode/
+
+# -------------------------------
+# OS‑специфичное
+# -------------------------------
+Thumbs.db
+desktop.ini
